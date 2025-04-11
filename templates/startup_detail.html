@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ startup.name }} - Details{% endblock %}
+
+{% block content %}
+    <h2 style="font-size: 1.875rem; font-weight: bold; color: #1f2937; margin-bottom: 2rem;">{{ startup.name }}</h2>
+    <div class="card">
+        <h3 style="font-size: 1.25rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">Startup Details</h3>
+        <div class="grid grid-cols-1">
+            <p style="color: #6b7280;"><strong>Industry:</strong> {{ startup.industry }}</p>
+            <p style="color: #6b7280;"><strong>Funding Needed:</strong> ${{ "{:.2f}".format(startup.funding_needed) }}</p>
+            <p style="color: #6b7280;"><strong>Stage:</strong> {{ startup.stage }}</p>
+            <p style="color: #6b7280;"><strong>Risk Level:</strong> {{ startup.risk_level }}</p>
+        </div>
+        <p style="color: #6b7280; margin-top: 1rem;"><strong>Pitch:</strong> {{ startup.pitch }}</p>
+        <p style="color: #6b7280; margin-top: 0.5rem;"><strong>Traction:</strong> {{ startup.traction }}</p>
+
+        <div style="margin-top: 1.5rem;">
+            <h4 style="font-size: 1.125rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">Take Action</h4>
+            <form method="POST" id="invest-form" style="margin-bottom: 1rem;">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <input type="number" step="0.01" id="amount" name="amount" placeholder="Investment Amount ($)" style="flex-grow: 1;">
+                    <input type="hidden" name="action" value="invest">
+                    <button type="submit" class="btn btn-success">Invest</button>
+                </div>
+            </form>
+            <form method="POST" style="display: inline-block;">
+                <input type="hidden" name="action" value="interest">
+                <button type="submit" class="btn btn-info">Show Interest</button>
+            </form>
+            <a href="{{ url_for('messages', startup_id=startup.id, other_user_id=founder_id) }}" class="btn btn-primary" style="margin-left: 1rem;">Message Startup</a>
+        </div>
+    </div>
+    <a href="{{ url_for('investor_dashboard') }}" class="btn btn-secondary" style="margin-top: 1rem;">Back to Dashboard</a>
+{% endblock %}

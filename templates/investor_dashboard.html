@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Investor Dashboard{% endblock %}
+
+{% block content %}
+    <h2 style="font-size: 1.875rem; font-weight: bold; color: #1f2937; margin-bottom: 2rem;">Investor Dashboard</h2>
+    
+    <!-- Filters -->
+    <div class="card" style="margin-bottom: 2rem;">
+        <h3 style="font-size: 1.25rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">Filter Startups</h3>
+        <form method="POST">
+            <div class="grid grid-cols-1">
+                <div>
+                    <label for="industry">Industry</label>
+                    <select id="industry" name="industry">
+                        <option value="">Any</option>
+                        <option value="Tech">Tech</option>
+                        <option value="Healthcare">Healthcare</option>
+                        <option value="Finance">Finance</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="stage">Stage</label>
+                    <select id="stage" name="stage">
+                        <option value="">Any</option>
+                        <option value="Idea">Idea</option>
+                        <option value="MVP">MVP</option>
+                        <option value="Growth">Growth</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="risk_level">Risk Level</label>
+                    <select id="risk_level" name="risk_level">
+                        <option value="">Any</option>
+                        <option value="Low">Low</option>
+                        <option value="Medium">Medium</option>
+                        <option value="High">High</option>
+                    </select>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">Apply Filters</button>
+        </form>
+    </div>
+
+    <!-- Startups -->
+    <h3 style="font-size: 1.25rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">Startup Matches</h3>
+    {% if startups %}
+        <div class="grid grid-cols-1">
+            {% for startup in startups %}
+                <a href="{{ url_for('startup_detail', startup_id=startup.id) }}" class="startup-link">
+                    <div class="card" style="margin-bottom: 1.5rem;">
+                        <h4 style="font-size: 1.125rem; font-weight: 600; color: #1f2937; margin-bottom: 0.5rem;">{{ startup.name }}</h4>
+                        <p style="color: #6b7280;"><strong>Industry:</strong> {{ startup.industry }}</p>
+                        <p style="color: #6b7280;"><strong>Pitch:</strong> {{ startup.pitch | truncate(100) }}</p>
+                        <p style="color: #6b7280;"><strong>Funding Needed:</strong> ${{ "{:.2f}".format(startup.funding_needed) }}</p>
+                        <p style="color: #6b7280;"><strong>Stage:</strong> {{ startup.stage }}</p>
+                        <p style="color: #6b7280;"><strong>Risk Level:</strong> {{ startup.risk_level }}</p>
+                        {% if startup.compatibility is defined %}
+                            <p style="color: #6b7280;"><strong>Compatibility:</strong> {{ startup.compatibility }}%</p>
+                        {% endif %}
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p style="color: #6b7280;">No startups found.</p>
+    {% endif %}
+{% endblock %}

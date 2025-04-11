@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Messages{% endblock %}
+
+{% block content %}
+    <h2 style="font-size: 1.875rem; font-weight: bold; color: #1f2937; margin-bottom: 2rem;">Messages</h2>
+    <div class="card chat-container">
+        <!-- Conversation List -->
+        <div class="chat-conversations">
+            <h3 style="font-size: 1.125rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">Conversations</h3>
+            {% if conversations %}
+                <ul style="list-style: none;">
+                    {% for conv in conversations %}
+                        <li>
+                            <a href="{{ url_for('messages', startup_id=conv.startup_id, other_user_id=conv.other_user_id) }}"
+                               style="display: block; padding: 0.75rem; border-radius: 0.375rem; text-decoration: none; color: inherit; {% if conv.startup_id == selected_startup_id and conv.other_user_id == selected_other_user_id %}background-color: #dbeafe;{% else %}background-color: transparent;{% endif %}"
+                               onmouseover="this.style.backgroundColor='#f3f4f6'"
+                               onmouseout="this.style.backgroundColor='{% if conv.startup_id == selected_startup_id and conv.other_user_id == selected_other_user_id %}#dbeafe{% else %}transparent{% endif %}'">
+                                <strong>{{ conv.startup_name }}</strong> - {{ conv.other_username }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p style="color: #6b7280;">No conversations yet.</p>
+            {% endif %}
+        </div>
+
+        <!-- Messages -->
+        <div class="chat-messages">
+            {% if selected_startup_id and selected_other_user_id %}
+                <h3 style="font-size: 1.125rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">Chat</h3>
+                <div id="message-container" class="chat-message-container">
+                    {% for msg in messages %}
+                        <div style="margin-bottom: 0.5rem; display: flex; {% if msg.sender_id == session['user_id'] %}justify-content: flex-end;{% else %}justify-content: flex-start;{% endif %}">
+                            <div class="chat-bubble {% if msg.sender_id == session['user_id'] %}sent{% else %}received{% endif %}">
+                                <p style="font-size: 0.875rem;"><strong>{{ msg.sender_username }}</strong> ({{ msg.timestamp }})</p>
+                                <p>{{ msg.content }}</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <form method="POST">
+                    <input type="hidden" name="receiver_id" value="{{ selected_other_user_id }}">
+                    <input type="hidden" name="startup_id" value="{{ selected_startup_id }}">
+                    <div style="display: flex; gap: 0.5rem;">
+                        <textarea name="content" rows="2" placeholder="Type your message..." required></textarea>
+                        <button type="submit" class="btn btn-primary">Send</button>
+                    </div>
+                </form>
+            {% else %}
+                <p style="color: #6b7280;">Select a conversation to start chatting.</p>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

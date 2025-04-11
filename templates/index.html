@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}Startup Connect - Home{% endblock %}
+
+{% block content %}
+    <div style="text-align: center; padding: 4rem 0;">
+        <h1 style="font-size: 2.25rem; font-weight: bold; color: #1f2937; margin-bottom: 1rem;">Welcome to Startup Connect</h1>
+        <p style="font-size: 1.125rem; color: #6b7280; margin-bottom: 2rem;">Connecting visionary founders with forward-thinking investors.</p>
+        {% if 'user_id' not in session %}
+            <a href="{{ url_for('signup') }}" class="btn btn-primary" style="font-size: 1.125rem;">Get Started</a>
+        {% endif %}
+    </div>
+{% endblock %}      
