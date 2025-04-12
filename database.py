@@ -68,6 +68,32 @@ def init_db():
         )
     ''')
 
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS pitch_sessions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            startup_id INTEGER NOT NULL,
+            title TEXT NOT NULL,
+            pitch_content TEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            scheduled_at DATETIME,
+            is_active BOOLEAN DEFAULT 1,
+            FOREIGN KEY (startup_id) REFERENCES startups (id)
+        )
+    ''')
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS qna_messages (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            session_id INTEGER NOT NULL,
+            user_id INTEGER NOT NULL,
+            content TEXT NOT NULL,
+            is_answer BOOLEAN DEFAULT 0,
+            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (session_id) REFERENCES pitch_sessions (id),
+            FOREIGN KEY (user_id) REFERENCES users (id)
+        )
+    ''')
+
     conn.commit()
     conn.close()
 
@@ -75,6 +101,3 @@ def get_db_connection():
     conn = sqlite3.connect('startup_connect.db')
     conn.row_factory = sqlite3.Row
     return conn
-
-# Reinitialize database to ensure schema is applied
-init_db()

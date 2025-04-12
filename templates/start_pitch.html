@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Start Pitch Session{% endblock %}
+
+{% block content %}
+    <div style="max-width: 28rem; margin: 0 auto;">
+        <h2 style="font-size: 1.5rem; font-weight: bold; color: #1f2937; margin-bottom: 1.5rem; text-align: center;">Start Pitch Session</h2>
+        <div class="card">
+            <form method="POST">
+                <div>
+                    <label for="title">Session Title</label>
+                    <input type="text" id="title" name="title" placeholder="e.g., Introducing {{ startup.name }}" required>
+                </div>
+                <div>
+                    <label for="pitch_content">Pitch Content</label>
+                    <textarea id="pitch_content" name="pitch_content" rows="6" placeholder="Share your pitch..." required></textarea>
+                </div>
+                <button type="submit" class="btn btn-success">Start Session</button>
+            </form>
+        </div>
+        <a href="{{ url_for('founder_dashboard') }}" class="btn btn-secondary" style="margin-top: 1rem;">Back to Dashboard</a>
+    </div>
+{% endblock %}

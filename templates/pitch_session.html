@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Pitch Session: {{ session.title }}{% endblock %}
+
+{% block content %}
+    <h2 style="font-size: 1.875rem; font-weight: bold; color: #1f2937; margin-bottom: 2rem;">{{ session.title }}</h2>
+    <div class="card">
+        <h3 style="font-size: 1.25rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">{{ session.startup_name }}'s Pitch</h3>
+        <p style="color: #6b7280; margin-bottom: 1rem;">{{ session.pitch_content }}</p>
+        <h3 style="font-size: 1.25rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">Live Q&A</h3>
+        <div id="qna-container" class="qna-container" data-session-id="{{ session.id }}">
+            {% for msg in qna_messages %}
+                <div class="qna-message" style="margin-bottom: 0.5rem; display: flex; {% if msg.is_answer %}justify-content: flex-end;{% else %}justify-content: flex-start;{% endif %}">
+                    <div class="chat-bubble {% if msg.is_answer %}sent{% else %}received{% endif %}">
+                        <p style="font-size: 0.875rem;"><strong>{{ msg.username }}</strong> ({{ msg.timestamp }})</p>
+                        <p>{{ msg.content }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <form id="qna-form" class="qna-form" data-is-founder="{{ 'true' if session.founder_id == session.user_id else 'false' }}">
+            <textarea id="qna-input" rows="2" placeholder="{% if session.founder_id == session.user_id %}Answer a question...{% else %}Ask a question...{% endif %}" required></textarea>
+            <button type="submit" class="btn btn-primary">{% if session.founder_id == session.user_id %}Answer{% else %}Ask{% endif %}</button>
+        </form>
+    </div>
+    <a href="{{ url_for('investor_dashboard' if session.role == 'investor' else 'founder_dashboard') }}" class="btn btn-secondary" style="margin-top: 1rem;">Back to Dashboard</a>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
+{% endblock %}

@@ -38,4 +38,49 @@ document.addEventListener('DOMContentLoaded', () => {
             card.style.opacity = '1';
         }, index * 100);
     });
+
+    // Live Q&A functionality
+    const qnaContainer = document.querySelector('#qna-container');
+    if (qnaContainer) {
+        const sessionId = qnaContainer.dataset.sessionId;
+        const socket = io();
+
+        socket.emit('join_session', { session_id: sessionId });
+
+        socket.on('new_qna', (data) => {
+            const qnaDiv = document.createElement('div');
+            qnaDiv.className = 'qna-message';
+            qnaDiv.style.marginBottom = '0.5rem';
+            qnaDiv.style.display = 'flex';
+            qnaDiv.style.justifyContent = data.is_answer ? 'flex-end' : 'flex-start';
+
+            const bubble = document.createElement('div');
+            bubble.className = `chat-bubble ${data.is_answer ? 'sent' : 'received'}`;
+            bubble.innerHTML = `
+                <p style="font-size: 0.875rem;"><strong>${data.username}</strong> (${data.timestamp})</p>
+                <p>${data.content}</p>
+            `;
+            qnaDiv.appendChild(bubble);
+            qnaContainer.appendChild(qnaDiv);
+            qnaContainer.scrollTop = qnaContainer.scrollHeight;
+        });
+
+        const qnaForm = document.querySelector('#qna-form');
+        if (qnaForm) {
+            qnaForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const input = document.querySelector('#qna-input');
+                const content = input.value.trim();
+                if (content) {
+                    const isAnswer = qnaForm.dataset.isFounder === 'true';
+                    socket.emit('send_qna', {
+                        session_id: sessionId,
+                        content: content,
+                        is_answer: isAnswer
+                    });
+                    input.value = '';
+                }
+            });
+        }
+    }
 });

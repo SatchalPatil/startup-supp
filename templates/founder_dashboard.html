@@ -5,104 +5,109 @@
 {% block content %}
     <h2 style="font-size: 1.875rem; font-weight: bold; color: #1f2937; margin-bottom: 2rem;">Founder Dashboard</h2>
     
-    <!-- Add New Startup Form -->
+    <!-- Startup Form -->
     <div class="card" style="margin-bottom: 2rem;">
-        <h3 style="font-size: 1.25rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">Add New Startup</h3>
+        <h3 style="font-size: 1.25rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">
+            {% if startup %}Update{% else %}Create{% endif %} Your Startup
+        </h3>
         <form method="POST" id="startup-form">
             <div class="grid grid-cols-1" style="margin-bottom: 1rem;">
                 <div>
                     <label for="name">Startup Name</label>
-                    <input type="text" id="name" name="name" required>
+                    <input type="text" id="name" name="name" value="{{ startup.name if startup }}" required>
                 </div>
                 <div>
                     <label for="industry">Industry</label>
                     <select id="industry" name="industry" required>
-                        <option value="Tech">Tech</option>
-                        <option value="Healthcare">Healthcare</option>
-                        <option value="Finance">Finance</option>
-                        <option value="Other">Other</option>
+                        <option value="Tech" {% if startup and startup.industry == 'Tech' %}selected{% endif %}>Tech</option>
+                        <option value="Healthcare" {% if startup and startup.industry == 'Healthcare' %}selected{% endif %}>Healthcare</option>
+                        <option value="Finance" {% if startup and startup.industry == 'Finance' %}selected{% endif %}>Finance</option>
+                        <option value="Other" {% if startup and startup.industry == 'Other' %}selected{% endif %}>Other</option>
                     </select>
                 </div>
                 <div>
                     <label for="funding_needed">Funding Needed ($)</label>
-                    <input type="number" step="0.01" id="funding_needed" name="funding_needed" required>
+                    <input type="number" step="0.01" id="funding_needed" name="funding_needed" value="{{ startup.funding_needed if startup else '' }}" required>
                 </div>
                 <div>
                     <label for="stage">Stage</label>
                     <select id="stage" name="stage" required>
-                        <option value="Idea">Idea</option>
-                        <option value="MVP">MVP</option>
-                        <option value="Growth">Growth</option>
+                        <option value="Idea" {% if startup and startup.stage == 'Idea' %}selected{% endif %}>Idea</option>
+                        <option value="MVP" {% if startup and startup.stage == 'MVP' %}selected{% endif %}>MVP</option>
+                        <option value="Growth" {% if startup and startup.stage == 'Growth' %}selected{% endif %}>Growth</option>
                     </select>
                 </div>
                 <div>
                     <label for="risk_level">Risk Level</label>
                     <select id="risk_level" name="risk_level" required>
-                        <option value="Low">Low</option>
-                        <option value="Medium">Medium</option>
-                        <option value="High">High</option>
+                        <option value="Low" {% if startup and startup.risk_level == 'Low' %}selected{% endif %}>Low</option>
+                        <option value="Medium" {% if startup and startup.risk_level == 'Medium' %}selected{% endif %}>Medium</option>
+                        <option value="High" {% if startup and startup.risk_level == 'High' %}selected{% endif %}>High</option>
                     </select>
                 </div>
             </div>
             <div>
                 <label for="pitch">Pitch</label>
-                <textarea id="pitch" name="pitch" rows="4" required></textarea>
+                <textarea id="pitch" name="pitch" rows="4" required>{{ startup.pitch if startup }}</textarea>
             </div>
             <div>
                 <label for="traction">Traction</label>
-                <textarea id="traction" name="traction" rows="3" required></textarea>
+                <textarea id="traction" name="traction" rows="3" required>{{ startup.traction if startup }}</textarea>
             </div>
-            <button type="submit" class="btn btn-primary">Add Startup</button>
+            <button type="submit" class="btn btn-primary">Save</button>
         </form>
     </div>
 
-    <!-- Existing Startups -->
-    {% if startups %}
-        <h3 style="font-size: 1.25rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">Your Startups</h3>
-        {% for startup in startups %}
-            <div class="card" style="margin-bottom: 2rem;">
-                <h4 style="font-size: 1.125rem; font-weight: 600; color: #1f2937; margin-bottom: 0.5rem;">{{ startup.name }}</h4>
-                <p style="color: #6b7280;"><strong>Industry:</strong> {{ startup.industry }}</p>
-                <p style="color: #6b7280;"><strong>Pitch:</strong> {{ startup.pitch }}</p>
-                <p style="color: #6b7280;"><strong>Funding Needed:</strong> ${{ "{:.2f}".format(startup.funding_needed) }}</p>
-                <p style="color: #6b7280;"><strong>Stage:</strong> {{ startup.stage }}</p>
-                <p style="color: #6b7280;"><strong>Risk Level:</strong> {{ startup.risk_level }}</p>
-                <p style="color: #6b7280;"><strong>Traction:</strong> {{ startup.traction }}</p>
-
-                <!-- Analytics -->
-                <div style="margin-top: 1rem;">
-                    <h5 style="font-size: 1rem; font-weight: 600; color: #374151; margin-bottom: 0.5rem;">Analytics</h5>
-                    <div class="grid grid-cols-1">
-                        <div class="analytics-item views">
-                            <p class="value" style="font-size: 1.5rem; font-weight: bold;">{{ startup.views }}</p>
-                            <p style="color: #6b7280;">Profile Views</p>
-                        </div>
-                        <div class="analytics-item interests">
-                            <p class="value" style="font-size: 1.5rem; font-weight: bold;">{{ startup.interests }}</p>
-                            <p style="color: #6b7280;">Investor Interests</p>
-                        </div>
-                        <div class="analytics-item invested">
-                            <p class="value" style="font-size: 1.5rem; font-weight: bold;">${{ "{:.2f}".format(startup.total_invested) }}</p>
-                            <p style="color: #6b7280;">Total Invested</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Investors -->
-                {% if startup.investors %}
-                    <div style="margin-top: 1rem;">
-                        <h5 style="font-size: 1rem; font-weight: 600; color: #374151; margin-bottom: 0.5rem;">Investors</h5>
-                        <ul style="list-style: none;">
-                            {% for investor in startup.investors %}
-                                <li style="padding: 0.75rem; background-color: #f9fafb; border-radius: 0.375rem; margin-bottom: 0.5rem;">
-                                    <strong>{{ investor.username }}</strong> invested ${{ "{:.2f}".format(investor.amount) }} on {{ investor.timestamp }}
-                                    <a href="{{ url_for('messages', startup_id=startup.id, other_user_id=investor.investor_id) }}" class="btn btn-info" style="margin-left: 1rem; padding: 0.25rem 0.5rem;">Message</a>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                {% endif %}
+    <!-- Pitch Sessions -->
+    {% if startup %}
+        <div class="card" style="margin-bottom: 2rem;">
+            <h3 style="font-size: 1.25rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">Live Pitch Sessions</h3>
+            <p style="color: #6b7280; margin-bottom: 1rem;">Start or schedule a live pitch session to present your startup to investors.</p>
+            <div style="display: flex; gap: 1rem;">
+                <a href="{{ url_for('start_pitch') }}" class="btn btn-success">Start Now</a>
+                <a href="{{ url_for('schedule_pitch') }}" class="btn btn-info">Schedule Session</a>
             </div>
-        {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Analytics -->
+    {% if startup %}
+        <div class="card" style="margin-bottom: 2rem;">
+            <h3 style="font-size: 1.25rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">Startup Analytics</h3>
+            <div class="grid grid-cols-1">
+                <div class="analytics-item views">
+                    <p class="value" style="font-size: 1.5rem; font-weight: bold;">{{ analytics.views }}</p>
+                    <p style="color: #6b7280;">Profile Views</p>
+                </div>
+                <div class="analytics-item interests">
+                    <p class="value" style="font-size: 1.5rem; font-weight: bold;">{{ analytics.interests }}</p>
+                    <p style="color: #6b7280;">Investor Interests</p>
+                </div>
+                <div class="analytics-item invested">
+                    <p class="value" style="font-size: 1.5rem; font-weight: bold;">${{ "{:.2f}".format(analytics.total_invested) }}</p>
+                    <p style="color: #6b7280;">Total Invested</p>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Interactions -->
+    {% if interactions %}
+        <div class="card">
+            <h3 style="font-size: 1.25rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">Investor Interactions</h3>
+            <ul style="list-style: none;">
+                {% for interaction in interactions %}
+                    <li style="padding: 0.75rem; background-color: #f9fafb; border-radius: 0.375rem; margin-bottom: 0.5rem;">
+                        <strong>{{ interaction.username }}</strong>
+                        {% if interaction.type == 'investment' %}
+                            invested ${{ "{:.2f}".format(interaction.amount) }}
+                        {% else %}
+                            showed interest
+                        {% endif %}
+                        on {{ interaction.timestamp }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
     {% endif %}
 {% endblock %}

@@ -294,6 +294,25 @@ form button {
     border-radius: 0.375rem;
 }
 
+/* Q&A */
+.qna-container {
+    height: 24rem;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background-color: #f9fafb;
+    border-radius: 0.375rem;
+}
+
+.qna-form {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.qna-form textarea {
+    flex-grow: 1;
+}
+
 /* Footer */
 footer {
     background-color: #1f2937;
